@@ -3,18 +3,6 @@
 #include <windows.h>
 #include <atltypes.h>
 
-HWND hWnd = GetForegroundWindow();
-
-POINT getWindowPos()
-{
-	POINT ret;
-	CRect rect;
-	GetWindowRect(hWnd, rect);
-	ret.x = rect.left;
-	ret.y = rect.top + 30 + 1;
-	return ret;
-}
-
 #define RED RGB(255,0,0)
 
 #define seconds(miliseconds) (miliseconds * 1000)
@@ -27,18 +15,26 @@ POINT getWindowPos()
 #define gravitation true
 #define speed 0.01
 
+HWND hWnd = GetForegroundWindow();
+COORD P = { 100, 100 };
+RECT pRECT = { 0 };
+HPEN RPEN = CreatePen(PS_SOLID, 2, RED);
+HDC hDC = GetWindowDC(hWnd);
+EXTLOGPEN pINFO;
+
 point max = { 940, 480 };
 point min = { 0, 0 };
 int devis = 2;
 int gravityPower = 9.8;
 
-POINT getPower()
+POINT getWindowPos()
 {
-	POINT pastPosition = getWindowPos();
-	Sleep(seconds(1));
-	POINT presentPosition = getWindowPos();
-
-	return { pastPosition.x - presentPosition.x, pastPosition.y - presentPosition.y };
+	POINT ret;
+	CRect rect;
+	GetWindowRect(hWnd, rect);
+	ret.x = rect.left;
+	ret.y = rect.top + 30 + 1;
+	return ret;
 }
 
 
@@ -136,34 +132,42 @@ public:
 		power.y += py;
 	}
 
-	void show(HDC _hDC)
+	void punch(POINT _power)
 	{
-		Ellipse(_hDC, position.x - size.x, position.y + size.y, position.x + size.x, position.y - size.y);
+		power.x += _power.x;
+		power.y += _power.y;
+	}
+
+	void show()
+	{
+		Ellipse(hDC, position.x - size.x, position.y + size.y, position.x + size.x, position.y - size.y);
 	}
 };
+POINT getWindowPower(short delay, byte factor)
+{
+	POINT firstPosition = getWindowPos();
+	Sleep(delay);
+	POINT secondPosition = getWindowPos();
+	return { -(firstPosition.x - secondPosition.x) * factor, (firstPosition.y - secondPosition.y) * factor };
+}
 
 int main(int argc, char *argv[])
 {
-	COORD P = { 0 };
-	RECT pRECT = { 0 };
 	GetClientRect(hWnd, &pRECT);
-	HPEN RPEN = CreatePen(PS_SOLID, 2, RED);
-	HDC hDC = GetWindowDC(hWnd);
 	SetBkMode(hDC, TRANSPARENT);
-	P.X = 100;
-	P.Y = 100;
-	EXTLOGPEN pINFO;
 	GetObject(RPEN, sizeof(EXTLOGPEN), &pINFO);
 	SelectObject(hDC, RPEN);
 
 	Object ellipse(P.X, P.Y, 30, 30, 0);
-	ellipse.punch(500, 0);
+	ellipse.punch(500, 100);
 
-	every(i, speed,
+	while (true)
+	{
+		ellipse.punch(getWindowPower(seconds(speed), 2));
 		ellipse.alife();
 		clear;
-		ellipse.show(hDC);
-	)
+		ellipse.show();
+	}
 
 	return 0;
 

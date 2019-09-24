@@ -1,7 +1,7 @@
 ﻿  main.cpp
-c:\users\bagger\source\repos\проект28\проект28\main.cpp(23): warning C4005: every: изменение макроопределения
-  c:\users\bagger\source\repos\проект28\проект28\main.cpp(21): note: см. предыдущее определение "every"
-c:\users\bagger\source\repos\проект28\проект28\main.cpp(33): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
-c:\users\bagger\source\repos\проект28\проект28\main.cpp(166): warning C4244: аргумент: преобразование "double" в "DWORD", возможна потеря данных
+c:\users\bagger\source\repos\проект28\проект28\main.cpp(11): warning C4005: every: изменение макроопределения
+  c:\users\bagger\source\repos\проект28\проект28\main.cpp(9): note: см. предыдущее определение "every"
+c:\users\bagger\source\repos\проект28\проект28\main.cpp(28): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+c:\users\bagger\source\repos\проект28\проект28\main.cpp(166): warning C4244: аргумент: преобразование "double" в "short", возможна потеря данных
   Проект28.vcxproj -> C:\Users\BaGGeR\source\repos\Проект28\Debug\Проект28.exe
   Проект28.vcxproj -> C:\Users\BaGGeR\source\repos\Проект28\Debug\Проект28.pdb (Partial PDB)
