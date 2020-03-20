@@ -1,4 +1,5 @@
 #include "2DPhysObjects.hpp"
+#include <iostream>
 
 void inline eriseWindowsConsole()
 {
@@ -8,6 +9,7 @@ int main(void)
 {
 	ball ballObj;
 	int delayValue = 10;
+	ballObj.v.x = 50;
 
 	RECT tempRect = { 0 };
 	while(true)
@@ -18,7 +20,7 @@ int main(void)
 
 		ballObj.physTick();
 		eriseWindowsConsole();
-		ballObj.show(); //Очищаем, и сразу выводим снова. В угоду отсутвия мерцания
+		ballObj.show();
 		Sleep(1000 / frameInSec);
 	}
 

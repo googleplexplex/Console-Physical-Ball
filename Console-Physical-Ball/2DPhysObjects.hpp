@@ -22,12 +22,14 @@ public:
 	DOUBLE_POINT v;
 	DOUBLE_POINT a;
 	DOUBLE_POINT size;
+	unsigned int m;
+	double S;
 	virtual void physTick() = 0;
 };
 void standartPhysTick(object& physObj)
 {
 	physObj.v.x += physObj.a.x / frameInSec;
-	physObj.v.y += physObj.a.y / frameInSec;
+	physObj.v.y += physObj.a.y / frameInSec + physObj.m * gravity;
 
 	if (physObj.pos.x + physObj.v.x > max.x)
 		physObj.pos.x = max.x;
@@ -44,24 +46,26 @@ void standartPhysTick(object& physObj)
 		physObj.pos.y += physObj.v.y;
 }
 
-class ball : object
+class ball : public object
 {
 public:
-	HBRUSH fillColor;
-	HPEN strokeColor;
-	ball()
+	HBRUSH fillBrush;
+	HPEN strokePen;
+	ball(DOUBLE_POINT _pos = { max.x / 2, max.y / 2 }, DOUBLE_POINT _v = { 0, 0 }, DOUBLE_POINT _a = { 0, 0 }, DOUBLE_POINT _size = standartSize, COLORREF _fillColor = RGB(255, 255, 255), COLORREF _strokeColor = RGB(255, 0, 0), int strokePenWidth = 2, unsigned int _m = 5)
 	{
-		a = { 0, gravity };
-		v = { 0, 0 };
-		pos = { max.x / 2, max.y / 2};
-		size = standartSize;
-		fillColor = CreateSolidBrush(RGB(255, 255, 255));
-		strokeColor = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
+		pos = _pos;
+		v = _v;
+		a = _a;
+		size = _size;
+		fillBrush = CreateSolidBrush(_fillColor);
+		strokePen = CreatePen(PS_SOLID, strokePenWidth, _strokeColor);
+		m = _m;
+		S = size.x * size.x * 3.14;
 	}
 	void show()
 	{
-		HBRUSH oldBrush = (HBRUSH)SelectObject(thisWindowDC, fillColor);
-		HPEN oldPen = (HPEN)SelectObject(thisWindowDC, strokeColor);
+		HBRUSH oldBrush = (HBRUSH)SelectObject(thisWindowDC, fillBrush);
+		HPEN oldPen = (HPEN)SelectObject(thisWindowDC, strokePen);
 
 		Ellipse(thisWindowDC, pos.x, pos.y, pos.x + size.x, pos.y + size.y);
 
