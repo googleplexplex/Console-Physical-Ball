@@ -29,6 +29,7 @@ public:
 	double S;
 	virtual void physTick() = 0;
 	virtual DOUBLE_POINT getCenter() = 0;
+	virtual void collisionEvent() = 0;
 	virtual void show() = 0;
 };
 void standartPhysTick(object& physObj)
@@ -108,6 +109,11 @@ public:
 		redirectWhenCollisionHappened();
 		standartPhysTick(*this);
 	}
+	void collisionEvent()
+	{
+		reDirectX();
+		reDirectY();
+	}
 };
 
 void physTickAllObjects()
@@ -115,6 +121,23 @@ void physTickAllObjects()
 	for (std::list<object*>::iterator i = allObjectsList.begin(); i != allObjectsList.end(); i++)
 	{
 		(*i)->physTick();
+	}
+	int i = allObjectsList.size() - 1;
+	auto allObjectListBackCopy = allObjectsList.back();
+	for (auto iObj = allObjectListBackCopy--; i != 0; iObj--, i--)
+	{
+		DOUBLE_POINT iCenter = (*iObj).getCenter();
+		for (auto jObj = allObjectsList.front(); jObj != iObj; jObj++)
+		{
+			DOUBLE_POINT jCenter = (*jObj).getCenter();
+			if (sqrt(sqr(jCenter.x - iCenter.x) + sqr(jCenter.y - iCenter.y)) <= (*iObj).size.x + (*jObj).size.x)
+			{
+				(*iObj).collisionEvent();
+				(*jObj).collisionEvent();
+			}
+			jObj++;
+		}
+		iObj++;
 	}
 }
 void alignMaxToWindowSize()
