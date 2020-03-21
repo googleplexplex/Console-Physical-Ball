@@ -7,21 +7,22 @@ void inline eriseWindowsConsole()
 }
 int main(void)
 {
-	ball ballObj;
+	alignMaxToWindowSize(); //Сохраняем размер окна при старте программы
+	ball firstBallObj;
 	int delayValue = 10;
-	ballObj.v.x = 50;
+	firstBallObj.v.x = 50;
+	ball secondBallObj({ max.x / 2, 0 }, { 10, 0});
+	secondBallObj.strokePen = CreatePen(PS_SOLID, 2, RGB(255, 255, 0));
 
-	RECT tempRect = { 0 };
 	while(true)
 	{
-		GetWindowRect(thisWindowHWND, &tempRect);
-		max.x = tempRect.right - tempRect.left;
-		max.y = tempRect.bottom - tempRect.top - 70; //Динамически подстраиваемся под размер
+		alignMaxToWindowSize(); //Если пользователь изменил размер окна - сообщаем о этом
+		physTickAllObjects(); //Физическое взаимодействие всех объектов с окружением и другими объектами
 
-		ballObj.physTick();
-		eriseWindowsConsole();
-		ballObj.show();
-		Sleep(1000 / frameInSec);
+		eriseWindowsConsole(); //Вывод всех объектов
+		showAllObjects();
+
+		Sleep(1000 / frameInSec); //Синхронизация кадров
 	}
 
 	return 0;

@@ -1,12 +1,15 @@
 #pragma once
 #include <Windows.h>
 #include <climits>
+#include <list>
+#include <math.h>
 
 struct DOUBLE_POINT
 {
 	double x, y;
 };
 #define GRAVITY_STANDART 10
+#define sqr(x) ((x)*(x))
 double gravity = GRAVITY_STANDART;
 DOUBLE_POINT max = { 400, 200 };
 DOUBLE_POINT min = { 0, 0 };
@@ -25,6 +28,8 @@ public:
 	unsigned int m;
 	double S;
 	virtual void physTick() = 0;
+	virtual DOUBLE_POINT getCenter() = 0;
+	virtual void show() = 0;
 };
 void standartPhysTick(object& physObj)
 {
@@ -45,6 +50,7 @@ void standartPhysTick(object& physObj)
 	else
 		physObj.pos.y += physObj.v.y;
 }
+std::list<object*> allObjectsList;
 
 class ball : public object
 {
@@ -61,6 +67,13 @@ public:
 		strokePen = CreatePen(PS_SOLID, strokePenWidth, _strokeColor);
 		m = _m;
 		S = size.x * size.x * 3.14;
+
+		allObjectsList.push_back(this);
+	}
+	DOUBLE_POINT inline getCenter()
+	{
+		double halfOfSize = size.x / 2;
+		return { pos.x + halfOfSize, pos.y + halfOfSize };
 	}
 	void show()
 	{
@@ -96,3 +109,25 @@ public:
 		standartPhysTick(*this);
 	}
 };
+
+void physTickAllObjects()
+{
+	for (std::list<object*>::iterator i = allObjectsList.begin(); i != allObjectsList.end(); i++)
+	{
+		(*i)->physTick();
+	}
+}
+void alignMaxToWindowSize()
+{
+	RECT tempRect = { 0 };
+	GetWindowRect(thisWindowHWND, &tempRect);
+	max.x = tempRect.right - tempRect.left;
+	max.y = tempRect.bottom - tempRect.top - 70;
+}
+void inline showAllObjects()
+{
+	for (std::list<object*>::iterator i = allObjectsList.begin(); i != allObjectsList.end(); i++)
+	{
+		(*i)->show();
+	}
+}
